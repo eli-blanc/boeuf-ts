@@ -1,0 +1,27 @@
+{
+	"general": { "titre": "On joue-ti au boeuf?" },
+	"gage": {
+		"messageEnAtout": "{{joueur}} a gagé {{quoi}} en {{atout}}.",
+		"messageSansAtout": "{{joueur}} a gagé {{quoi}} sans atout.",
+		"type": { "PETITE": "la petite", "GROSSE": "la grosse", "NOMBRE": "Nombre" }
+	},
+	"sortes": {
+		"COEUR": "coeur",
+		"PIQUE": "pique",
+		"CARREAU": "carreau",
+		"TREFLE": "trèfle",
+		"JOKER": "joker",
+		"BLANCHE": "blanche",
+		"SANS_ATOUT": "sans atout"
+	},
+	"symboles": {
+		"SEPT": "7",
+		"HUIT": "8",
+		"NEUF": "9",
+		"DIX": "10",
+		"JACK": "J",
+		"DAME": "Q",
+		"ROI": "K",
+		"AS": "A"
+	}
+}
