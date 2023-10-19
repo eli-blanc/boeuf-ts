@@ -16,7 +16,7 @@ export class Action {
 	constructor(
 		public type: ActionType,
 		public joueur: Joueur,
-		public remporteur: Joueur,
+		public remporteur: Joueur | undefined = undefined,
 		public cptCarte: number = 0,
 		public cptJoueur = 0
 	) {}
@@ -90,7 +90,7 @@ export class Action {
 				} else {
 					action.cptCarte = 0;
 					action.type = ActionType.JOUER;
-					paquet.sorteDemandee = null;
+					paquet.sorteDemandee = undefined;
 					const miseur = paquet.getJoueurParNom(mise.joueur.nom);
 					if (miseur) {
 						// Clear quettee pour miseur

@@ -19,19 +19,20 @@ export class Paquet {
 		this.clearMain();
 
 		this.brasser();
+		console.log("fnn");
 	}
 	public joueur1: Joueur;
 	public joueur2: Joueur;
 	public joueur3: Joueur;
 	public joueur4: Joueur;
 	public joueurs: Joueur[];
-	public sorteDemandee: Sorte | null = null;
+	public sorteDemandee: Sorte | undefined = undefined;
 	public attendre: boolean = false;
 	public points: number[] = [0, 0];
 	public cartes: Carte[] = [];
 	public pile: Carte[] = [];
 	public main: Carte[] = [];
-	public quettee: Carte[] | null = null;
+	public quettee: Carte[] = [];
 
 	public initCartes() {
 		this.cartes = [];
@@ -52,7 +53,7 @@ export class Paquet {
 			}
 		}
 
-		this.quettee = null;
+		this.quettee = [];
 		if (this.avecQuettee) {
 			this.quettee = [];
 			this.cartes.push(new Carte(rang++, Sorte.JOKER, null, 15));
@@ -108,7 +109,7 @@ export class Paquet {
 
 	public clearMain() {
 		this.main = [new Carte(), new Carte(), new Carte(), new Carte()];
-		this.sorteDemandee = null;
+		this.sorteDemandee = undefined;
 	}
 
 	public prendreQuettee(mise: Mise) {
@@ -154,7 +155,7 @@ export class Paquet {
 		this.joueur4.cartes = this.cartes.slice(24, 32).sort((a, b) => a.rang - b.rang);
 
 		// Passe quettée
-		if (this.quettee !== null) {
+		if (this.quettee.length === 2) {
 			this.quettee = this.cartes.slice(32, 34).sort((a, b) => a.rang - b.rang);
 		}
 

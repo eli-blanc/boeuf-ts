@@ -29,7 +29,8 @@ export enum Symbole {
 export function getSorteStr(sorte: Sorte): string {
 	const sorteStr = getKeyByValue(Sorte, sorte);
 	if (!sorteStr) return "";
-	return i18next.t(`sorte.${sorteStr}`);
+	// return i18next.t(`sorte.${sorteStr}`);
+	return "bla";
 }
 
 function getKeyByValue(enumType: any, value: string | number): string | undefined {
@@ -134,10 +135,6 @@ export class Carte {
 	}
 
 	public isDisabled(cartes: Carte[], sorteDemandee: Sorte, atout: Sorte) {
-		if (sorteDemandee === null) {
-			return false;
-		}
-
 		if (this.isSorteDemandee(sorteDemandee, atout)) {
 			return false;
 		}

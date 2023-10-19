@@ -46,9 +46,6 @@ export class Joueur {
 	}
 
 	public setRefuseSorte(sorteDemandee: Sorte, carte: Carte, atout: Sorte) {
-		if (sorteDemandee === null) {
-			return;
-		}
 		let sorte = carte.sorte;
 		if (carte.isAtout(atout)) {
 			sorte = atout;
