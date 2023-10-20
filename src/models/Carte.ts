@@ -27,9 +27,10 @@ export enum Symbole {
 }
 
 export function getSorteStr(sorte: Sorte): string {
-	const sorteStr = getKeyByValue(Sorte, sorte);
-	if (!sorteStr) return "";
-	return i18next.t(`sorte.${sorteStr}`);
+	const key = getKeyByValue(Sorte, sorte);
+	if (!key) return "";
+	const sorteStr = i18next.t(`sortes.${key}`);
+	return sorteStr;
 }
 
 function getKeyByValue(enumType: any, value: string | number): string | undefined {
@@ -46,7 +47,6 @@ export class Carte {
 	) {
 		this.key = `${symbole}|${sorte}`;
 		this.symbole = symbole;
-		this.surelevee = false;
 		this.poids = poids;
 
 		this.image = this.getImage();
@@ -54,7 +54,7 @@ export class Carte {
 		this.setPoints();
 	}
 	public key: string;
-	public surelevee: boolean;
+	public surelevee: boolean = false;
 	public couleur: Couleur;
 	public image: string;
 	public points: number = 0;

@@ -16,11 +16,11 @@ const delaiAuto = 500;
 
 function App() {
 	// States
-	const [avecQuettee, setAvecQuettee] = React.useState<boolean>(true);
-	const [paquet, setPaquet] = React.useState<Paquet>(new Paquet(avecQuettee));
-	const [action, setAction] = React.useState<Action>(new Action(ActionType.GAGER, paquet.joueur1));
+	const [paquet, setPaquet] = React.useState<Paquet>(new Paquet(true));
+	const [action, setAction] = React.useState<Action>(getInitAction());
 	const [partie, setPartie] = React.useState<Partie>(new Partie(paquet));
 	const [auto, setAuto] = React.useState<boolean>(false);
+	const [avecQuettee, setAvecQuettee] = React.useState<boolean>(true);
 	const [showGager, setShowGager] = React.useState<boolean>(false);
 	const [choisirAtout, setChoisirAtout] = React.useState<boolean>(false);
 	const [mise, setMise] = React.useState<Mise>(new Mise(paquet.joueur1, 0, Sorte.SANS_ATOUT));
@@ -49,14 +49,19 @@ function App() {
 		}
 		return sousTitre;
 	}
+
+	function getInitAction(): Action {
+		return new Action(ActionType.GAGER, paquet.joueur1);
+	}
 	function onJeuOuvert() {
 		setOuvert(!ouvert);
 	}
 
 	function onQuettee(checked: boolean) {
 		setAvecQuettee(checked);
-		paquet.brasser(checked);
-		nextAction();
+		paquet.avecQuettee = checked;
+		paquet.brasser();
+		setAction(getInitAction());
 	}
 
 	function onAuto() {
@@ -64,9 +69,9 @@ function App() {
 	}
 
 	function onBrasser() {
-		partie.paquet.brasser(avecQuettee);
+		partie.paquet.brasser();
 		setMise(new Mise(paquet.joueur1, 0, Sorte.SANS_ATOUT));
-		setAction(new Action(ActionType.GAGER, paquet.joueur1));
+		setAction(getInitAction());
 	}
 
 	function onGager() {
@@ -103,7 +108,7 @@ function App() {
 	}
 	function nextAction() {
 		const brasseur = partie.brasses[partie.brasses.length - 1].brasseur;
-		setAction(action.next(mise, avecQuettee, paquet, brasseur, auto));
+		setAction(action.next(mise, paquet.avecQuettee, paquet, brasseur));
 		if (action.type === ActionType.REMPORTER) {
 			paquet.attendre = true;
 			if (action.cptCarte === 8) {
@@ -119,7 +124,7 @@ function App() {
 			setShowScore(true);
 			onScore();
 		}
-		if (action.type === ActionType.JOUER && action.joueur.index !== 0 && auto) {
+		if (action.type === ActionType.JOUER && action.joueur?.index !== 0 && auto) {
 			setTimeout(() => {
 				tableRef?.current?.onCliqueCarte(paquet.getMeilleureCarte(action, mise));
 				paquet.attendre = false;
@@ -129,6 +134,10 @@ function App() {
 	function onNextAction() {
 		nextAction();
 	}
+
+	React.useEffect(() => {
+		paquet.brasser();
+	}, [paquet]);
 	return (
 		<div
 			className="App"
@@ -157,11 +166,11 @@ function App() {
 						</Row>
 						<Row className="Switch-container control">
 							<span className="Switch-label">Jeu ouvert</span>
-							<Switch checked={ouvert} onChange={onJeuOuvert} />
+							<Switch defaultChecked={true} onChange={onJeuOuvert} />
 						</Row>
 						<Row className="Switch-container control">
 							<span className="Switch-label">Auto</span>
-							<Switch checked={auto} onChange={onAuto} />
+							<Switch defaultChecked={false} onChange={onAuto} />
 						</Row>
 						<Button className="control" type="primary" onClick={() => onBrasser()}>
 							Brasser
@@ -184,7 +193,7 @@ function App() {
 								nextAction={onNextAction}
 								mise={mise}
 								ouvert={ouvert}
-								avecQuettee={avecQuettee}
+								avecQuettee={paquet.avecQuettee}
 							></TableComponent>
 						)}
 					</div>{" "}

@@ -4,7 +4,7 @@ import { Action, ActionType } from "./Action";
 import { Carte, Sorte, Symbole } from "./Carte";
 import { Joueur } from "./Joueur";
 import { Mise } from "./Mise";
-
+export const FOU: Joueur = new Joueur("Un fou");
 export class Paquet {
 	constructor(public avecQuettee: boolean) {
 		this.initCartes();
@@ -17,8 +17,6 @@ export class Paquet {
 		this.joueurs = [this.joueur1, this.joueur2, this.joueur3, this.joueur4];
 
 		this.clearMain();
-
-		this.brasser(this.avecQuettee);
 	}
 	public joueur1: Joueur;
 	public joueur2: Joueur;
@@ -98,7 +96,7 @@ export class Paquet {
 		return this.quettee;
 	}
 
-	public getNextJoueur(joueur: Joueur): Joueur | undefined {
+	public getNextJoueur(joueur: Joueur): Joueur {
 		let idx = joueur.getIndex() + 1;
 		if (idx >= 4) {
 			idx = 0;
@@ -112,11 +110,10 @@ export class Paquet {
 	}
 
 	public prendreQuettee(mise: Mise) {
-		if (!this.quettee) return outputError("Pas de quettée!");
+		if (!this.avecQuettee) return outputError("Pas de quettée!");
 		const joueur = this.getJoueurParNom(mise.joueur.nom);
 
 		if (!joueur) return outputError("Pas de joueur actif!");
-
 		const carte1 = this.quettee[0];
 		const carte2 = this.quettee[1];
 		carte1.surelevee = true;
@@ -127,15 +124,19 @@ export class Paquet {
 		this.quettee = [];
 	}
 
-	public getJoueurParNom(nom: string): Joueur | undefined {
-		return this.joueurs.find((item) => item.getNom() === nom);
+	public getJoueurParNom(nom: string): Joueur {
+		const joueur = this.joueurs.find((item) => item.getNom() === nom);
+		if (!joueur) return FOU;
+		return joueur;
 	}
 
-	public getJoueurParIdx(idx: number): Joueur | undefined {
-		return this.joueurs.find((item) => item.getIndex() === idx);
+	public getJoueurParIdx(idx: number): Joueur {
+		const joueur = this.joueurs.find((item) => item.getIndex() === idx);
+		if (!joueur) return FOU;
+		return joueur;
 	}
 
-	public brasser(avecQuettee: boolean) {
+	public brasser() {
 		// Paquet neuf
 		this.initCartes();
 
@@ -154,7 +155,7 @@ export class Paquet {
 		this.joueur4.cartes = this.cartes.slice(24, 32).sort((a, b) => a.rang - b.rang);
 
 		// Passe quettée
-		if (avecQuettee) {
+		if (this.avecQuettee) {
 			if (this.cartes.length < 34) return outputError("Nombre de cartes insuffisant pour la quettee!");
 			this.quettee = this.cartes.slice(32, 34).sort((a, b) => a.rang - b.rang);
 		}
@@ -260,7 +261,7 @@ export class Paquet {
 		return { carte: carteGagnante, joueur: remporteur, points: points };
 	}
 
-	public getRemporteur(mise: Mise, mainDeTable: boolean): Joueur | undefined {
+	public getRemporteur(mise: Mise, mainDeTable: boolean): Joueur {
 		const lead = this.getCarteLead(mise.atout, mise.petite);
 		if (lead.joueur) {
 			this.points[lead.joueur.equipeIdx] += lead.points;
@@ -268,6 +269,7 @@ export class Paquet {
 				this.points[lead.joueur.equipeIdx] += 10;
 			}
 		}
+		if (!lead.joueur) lead.joueur = FOU;
 		return lead.joueur;
 	}
 

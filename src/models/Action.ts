@@ -1,6 +1,6 @@
 import { Joueur } from "./Joueur";
 import { Mise } from "./Mise";
-import { Paquet } from "./Paquet";
+import { FOU, Paquet } from "./Paquet";
 
 export enum ActionType {
 	GAGER = "GAGER",
@@ -15,13 +15,17 @@ export enum ActionType {
 export class Action {
 	constructor(
 		public type: ActionType,
-		public joueur: Joueur,
-		public remporteur: Joueur | undefined = undefined,
+		public joueur: Joueur = FOU,
+		public remporteur: Joueur = FOU,
 		public cptCarte: number = 0,
 		public cptJoueur = 0
 	) {}
 
-	public getMsg() {
+	public getMsg(): string {
+		if (!this.joueur) {
+			console.log("Pas de joueur courant!");
+			return "";
+		}
 		switch (this.type) {
 			case ActionType.GAGER: {
 				return `C'est le temps de gager!`;
@@ -55,41 +59,44 @@ export class Action {
 		return JSON.parse(JSON.stringify(this));
 	}
 
-	public next(mise: Mise, avecQuettee: boolean, paquet: Paquet, brasseur: Joueur, auto: boolean): Action {
-		const action = this.copy();
+	public next(mise: Mise, avecQuettee: boolean, paquet: Paquet, brasseur: Joueur): Action {
+		if (!this.joueur) {
+			console.log("Pas de joueur actif!");
+			return this;
+		}
 		switch (this.type) {
 			case ActionType.GAGER: {
 				if (avecQuettee) {
 					paquet.prendreQuettee(mise);
-					action.type = ActionType.CHOISIR_ATOUT;
-					action.cptCarte = 0;
+					this.type = ActionType.CHOISIR_ATOUT;
+					this.cptCarte = 0;
 				} else {
-					action.type = ActionType.JOUER;
+					this.type = ActionType.JOUER;
 				}
-				action.joueur = paquet.getJoueurParNom(mise.joueur.nom);
+				this.joueur = mise.joueur;
 				break;
 			}
 			case ActionType.CHOISIR_ATOUT: {
 				paquet.trierBibittes(mise);
-				action.type = ActionType.PASSER;
+				this.type = ActionType.PASSER;
 				break;
 			}
 			case ActionType.PASSER: {
-				if (action.cptCarte === 0) {
-					action.cptCarte++;
+				if (this.cptCarte === 0) {
+					this.cptCarte++;
 				} else {
-					action.cptCarte = 0;
-					action.type = ActionType.DISCARTER;
-					action.joueur = paquet.getPartenaire(action.joueur);
+					this.cptCarte = 0;
+					this.type = ActionType.DISCARTER;
+					this.joueur = paquet.getPartenaire(this.joueur);
 				}
 				break;
 			}
 			case ActionType.DISCARTER: {
-				if (action.cptCarte === 0) {
-					action.cptCarte++;
+				if (this.cptCarte === 0) {
+					this.cptCarte++;
 				} else {
-					action.cptCarte = 0;
-					action.type = ActionType.JOUER;
+					this.cptCarte = 0;
+					this.type = ActionType.JOUER;
 					paquet.sorteDemandee = undefined;
 					const miseur = paquet.getJoueurParNom(mise.joueur.nom);
 					if (miseur) {
@@ -98,10 +105,10 @@ export class Action {
 							carte.surelevee = false;
 						}
 						// Clear quettee pour partenaire
-						for (let carte of action.joueur.cartes) {
+						for (let carte of this.joueur.cartes) {
 							carte.surelevee = false;
 						}
-						action.joueur = paquet.getNextJoueur(miseur);
+						this.joueur = paquet.getNextJoueur(miseur);
 					} else {
 						console.log("Pas de miseur!");
 					}
@@ -109,40 +116,44 @@ export class Action {
 				break;
 			}
 			case ActionType.JOUER: {
-				action.cptJoueur++;
-				if (action.cptJoueur === 4) {
-					action.type = ActionType.REMPORTER;
-					action.cptCarte++;
-					action.cptJoueur = 0;
-					action.remporteur = paquet.getRemporteur(mise, action.cptCarte === 8);
-					action.joueur = action.remporteur;
+				this.cptJoueur++;
+				if (this.cptJoueur === 4) {
+					this.type = ActionType.REMPORTER;
+					this.cptCarte++;
+					this.cptJoueur = 0;
+					this.remporteur = paquet.getRemporteur(mise, this.cptCarte === 8);
+					this.joueur = this.remporteur;
 				} else {
-					action.joueur = paquet.getNextJoueur(action.joueur);
+					this.joueur = paquet.getNextJoueur(this.joueur);
 				}
 
 				break;
 			}
 			case ActionType.REMPORTER: {
 				paquet.clearMain();
-				if (action.cptCarte === 8) {
-					action.cptCarte = 0;
-					action.cptJoueur = 0;
-					action.type = ActionType.BRASSER;
-					action.joueur = paquet.getNextJoueur(brasseur);
-					action.remporteur = null;
+				if (this.cptCarte === 8) {
+					this.cptCarte = 0;
+					this.cptJoueur = 0;
+					this.type = ActionType.BRASSER;
+					this.joueur = paquet.getNextJoueur(brasseur);
+					this.remporteur = FOU;
 				} else {
-					action.type = ActionType.JOUER;
+					this.type = ActionType.JOUER;
 				}
 				break;
 			}
 			case ActionType.BRASSER: {
-				action.type = ActionType.BRASSER;
+				this.type = ActionType.BRASSER;
 				break;
 			}
 			default: {
 			}
 		}
-		paquet.setJoueurActif(action.joueur);
-		return action;
+		if (!this.joueur) {
+			console.log("Pas de joueur actif!");
+			return this;
+		}
+		paquet.setJoueurActif(this.joueur);
+		return this;
 	}
 }

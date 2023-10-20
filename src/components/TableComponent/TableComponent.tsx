@@ -54,7 +54,9 @@ const TableComponent: React.ForwardRefRenderFunction<TableComponentMethods, Tabl
 		const nCartes = cartesAtout === 1 ? "1 carte" : "2 cartes";
 		message.info(`${props.action.joueur.getNom()} a discarter ${nCartes} d'atout.`);
 	}
-
+	React.useEffect(() => {
+		console.log(props.paquet.quettee);
+	}, [props]);
 	return (
 		<div className={styles.TableComponent} data-testid="TableComponent">
 			{/* Partenaire */}
@@ -85,7 +87,7 @@ const TableComponent: React.ForwardRefRenderFunction<TableComponentMethods, Tabl
 				</Col>
 				{/* Quettée */}
 				{props.avecQuettee && props.action.type === ActionType.GAGER && (
-					<Col style={{ marginTop: "50px" }}>
+					<Col style={{ marginTop: "52px" }}>
 						<GroupeCartesComponent
 							action={props.action}
 							actif={false}

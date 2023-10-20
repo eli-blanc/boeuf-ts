@@ -21,7 +21,6 @@ const JoueurComponent: FC<JoueurComponentProps> = (props: JoueurComponentProps) 
 	function onDiscarte(carte: Carte) {
 		props.cliqueCarte(carte);
 	}
-
 	return (
 		<div className={`${styles.JoueurComponent} App-center`} data-testid="JoueurComponent">
 			{/* Nom au-dessus */}

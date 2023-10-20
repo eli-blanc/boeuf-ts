@@ -1,6 +1,6 @@
 import { Form, InputNumber, Radio, Select } from "antd";
 import React, { FC } from "react";
-import { Sorte } from "../../models/Carte";
+import { getSorteStr, Sorte } from "../../models/Carte";
 import { Joueur } from "../../models/Joueur";
 import { Mise, Montant } from "../../models/Mise";
 import styles from "./MiseComponent.module.css";
@@ -16,13 +16,15 @@ const MiseComponent: FC<MiseComponentProps> = (props) => {
 	const [radioIdx, setRadioIdx] = React.useState<number>(1);
 	const [mise, setMise] = React.useState<Mise>(props.mise);
 
-	const joueurs: any[] = [];
+	const listeJoueurs: any[] = [];
 	props.joueurs.map((item: Joueur, index: number) =>
-		joueurs.push(<Select.Option key={index}>{item.nom}</Select.Option>)
+		listeJoueurs.push(<Select.Option key={index}>{item.nom}</Select.Option>)
 	);
-	const atoutsList = [Sorte.COEUR, Sorte.PIQUE, Sorte.CARREAU, Sorte.TREFLE, Sorte.SANS_ATOUT];
-	const atouts: any[] = [];
-	atoutsList.map((item, index) => atouts.push(<Select.Option key={index}>{item}</Select.Option>));
+	const atouts = [Sorte.COEUR, Sorte.PIQUE, Sorte.CARREAU, Sorte.TREFLE, Sorte.SANS_ATOUT];
+	const listeAtouts: any[] = [];
+	atouts.map((item: Sorte, index) =>
+		listeAtouts.push(<Select.Option key={index}>{getSorteStr(item)}</Select.Option>)
+	);
 
 	function onJoueur(nom: string) {
 		const joueur = props.joueurs.find((j) => j.nom === nom);
@@ -33,7 +35,7 @@ const MiseComponent: FC<MiseComponentProps> = (props) => {
 	}
 
 	function onAtout(idx: number) {
-		props.mise.atout = atoutsList[idx];
+		props.mise.atout = atouts[idx];
 	}
 
 	function onMontant(value: any) {
@@ -70,7 +72,7 @@ const MiseComponent: FC<MiseComponentProps> = (props) => {
 						defaultValue="Gilberte"
 						disabled={props.atoutEnabled}
 					>
-						{joueurs}
+						{listeJoueurs}
 					</Select>
 				</Form.Item>
 				{/* Montant */}
@@ -100,11 +102,11 @@ const MiseComponent: FC<MiseComponentProps> = (props) => {
 				<Form.Item label="En quoi?" required style={{ width: "600px" }}>
 					<Select
 						allowClear
-						onChange={(atout) => onAtout(atout)}
-						defaultValue={Sorte.PIQUE}
+						onChange={(atout: string) => onAtout(Number(atout))}
+						defaultValue={getSorteStr(Sorte.PIQUE)}
 						disabled={!props.atoutEnabled}
 					>
-						{atouts}
+						{listeAtouts}
 					</Select>
 				</Form.Item>
 			</Form>
