@@ -23,7 +23,7 @@ const JoueurComponent: FC<JoueurComponentProps> = (props: JoueurComponentProps) 
 	}
 
 	return (
-		<div className={styles.JoueurComponent} data-testid="JoueurComponent">
+		<div className={`${styles.JoueurComponent} App-center`} data-testid="JoueurComponent">
 			{/* Nom au-dessus */}
 			{!props.moi && (
 				<p

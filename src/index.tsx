@@ -8,7 +8,6 @@ import { I18nextProvider } from "react-i18next";
 import { initReactI18next } from "react-i18next";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-console.log(root);
 i18n.use(initReactI18next).init({
 	resources: {
 		en: {
@@ -24,7 +23,6 @@ i18n.use(initReactI18next).init({
 		escapeValue: false,
 	},
 });
-console.log(i18n);
 root.render(
 	<React.StrictMode>
 		<I18nextProvider i18n={i18n}>

@@ -16,7 +16,7 @@ export class Brasse {
 export class Partie {
 	constructor(public paquet: Paquet) {
 		this.paquet = paquet;
-		this.paquet.brasser();
+		this.paquet.brasser(paquet.avecQuettee);
 		this.brasses = [new Brasse(0, this.paquet.joueur1, [0, 0])];
 	}
 	public brasses: Brasse[];

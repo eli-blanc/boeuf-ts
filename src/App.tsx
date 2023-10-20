@@ -8,22 +8,34 @@ import { Paquet } from "./models/Paquet";
 import TableComponent, { TableComponentMethods } from "./components/TableComponent/TableComponent";
 import { Mise } from "./models/Mise";
 import { Sorte } from "./models/Carte";
+import ScoreComponent, { ScoreComponentMethods } from "./components/ScoreComponent/ScoreComponent";
+import MiseComponent from "./components/MiseComponent/MiseComponent";
 
 const { Header, Content } = Layout;
 const delaiAuto = 500;
 
 function App() {
-	const [paquet, setPaquet] = React.useState<Paquet>(new Paquet(true));
-	const [action, setAction] = React.useState<Action>(new Action(ActionType.BRASSER, paquet.joueur1));
+	// States
+	const [avecQuettee, setAvecQuettee] = React.useState<boolean>(true);
+	const [paquet, setPaquet] = React.useState<Paquet>(new Paquet(avecQuettee));
+	const [action, setAction] = React.useState<Action>(new Action(ActionType.GAGER, paquet.joueur1));
 	const [partie, setPartie] = React.useState<Partie>(new Partie(paquet));
 	const [auto, setAuto] = React.useState<boolean>(false);
+	const [showGager, setShowGager] = React.useState<boolean>(false);
+	const [choisirAtout, setChoisirAtout] = React.useState<boolean>(false);
 	const [mise, setMise] = React.useState<Mise>(new Mise(paquet.joueur1, 0, Sorte.SANS_ATOUT));
-	const [avecQuettee, setAvecQuettee] = React.useState<boolean>(true);
 	const [ouvert, setOuvert] = React.useState<boolean>(true);
 	const [titre, setTitre] = React.useState<string>("");
 	const [showScore, setShowScore] = React.useState<boolean>(false);
+
+	// Ref
 	const tableRef = React.useRef<TableComponentMethods | null>(null);
+	const scoreRef = React.useRef<ScoreComponentMethods | null>(null);
+
+	// Other
 	const { t, i18n } = useTranslation();
+
+	// Methods
 	function getSousTitre(): string {
 		if (!action) {
 			console.log("Action undefined!");
@@ -37,13 +49,58 @@ function App() {
 		}
 		return sousTitre;
 	}
-	function onQuettee(checked: boolean) {}
-	function onJeuOuvert(checked: boolean) {}
-	function onAuto(checked: boolean) {}
-	function onBrasser() {}
-	function onGager() {}
-	function onScore() {}
-	function onTest() {}
+	function onJeuOuvert() {
+		setOuvert(!ouvert);
+	}
+
+	function onQuettee(checked: boolean) {
+		setAvecQuettee(checked);
+		paquet.brasser(checked);
+		nextAction();
+	}
+
+	function onAuto() {
+		setAuto(!auto);
+	}
+
+	function onBrasser() {
+		partie.paquet.brasser(avecQuettee);
+		setMise(new Mise(paquet.joueur1, 0, Sorte.SANS_ATOUT));
+		setAction(new Action(ActionType.GAGER, paquet.joueur1));
+	}
+
+	function onGager() {
+		let mise;
+		if (mise === null || action.type === ActionType.BRASSER) {
+			setMise(new Mise(paquet.joueur1, 0, Sorte.SANS_ATOUT));
+		}
+
+		setShowGager(true);
+	}
+
+	function onScore() {
+		scoreRef?.current?.updateData(partie.brasses);
+		setShowScore(true);
+	}
+
+	function onGagerOk() {
+		setShowGager(false);
+		setChoisirAtout(!choisirAtout);
+		setTitre(mise.getStr());
+		nextAction();
+	}
+
+	function onGagerCancel() {
+		setShowGager(false);
+	}
+
+	function onScoreOk() {
+		setShowScore(false);
+	}
+
+	function onScoreCancel() {
+		setShowScore(false);
+	}
 	function nextAction() {
 		const brasseur = partie.brasses[partie.brasses.length - 1].brasseur;
 		setAction(action.next(mise, avecQuettee, paquet, brasseur, auto));
@@ -94,44 +151,28 @@ function App() {
 			<Content>
 				<div>
 					<div className="App-controls">
-						<Row gutter={6}>
-							<Col>
-								<p style={{ color: "white" }}>Quettée </p>
-							</Col>
-							<Col>
-								<Switch defaultChecked onChange={(checked) => onQuettee(checked)} />
-							</Col>
+						<Row className="Switch-container control">
+							<span className="Switch-label">Quettée</span>
+							<Switch checked={avecQuettee} onChange={(checked) => onQuettee(checked)} />
 						</Row>
-						<Row gutter={6}>
-							<Col>
-								<p style={{ color: "white" }}>Jeu ouvert</p>
-							</Col>
-							<Col>
-								<Switch defaultChecked onChange={(checked) => onJeuOuvert(checked)} />
-							</Col>
+						<Row className="Switch-container control">
+							<span className="Switch-label">Jeu ouvert</span>
+							<Switch checked={ouvert} onChange={onJeuOuvert} />
 						</Row>
-						<Row gutter={6}>
-							<Col>
-								<p style={{ color: "white" }}>Auto</p>
-							</Col>
-							<Col>
-								<Switch onChange={(checked) => onAuto(checked)} />
-							</Col>
+						<Row className="Switch-container control">
+							<span className="Switch-label">Auto</span>
+							<Switch checked={auto} onChange={onAuto} />
 						</Row>
-						<Button type="primary" onClick={() => onBrasser()}>
+						<Button className="control" type="primary" onClick={() => onBrasser()}>
 							Brasser
 						</Button>
-						<Button style={{ marginTop: "15px" }} type="primary" onClick={() => onGager()}>
+						<Button className="control" type="primary" onClick={() => onGager()}>
 							Gager
 						</Button>
-						<Button style={{ marginTop: "15px" }} type="primary" onClick={() => onScore()}>
+						<Button className="control" type="primary" onClick={() => onScore()}>
 							Score
 						</Button>
-						<Button style={{ marginTop: "15px" }} type="primary" onClick={() => onTest()}>
-							Test
-						</Button>
 					</div>
-
 					{/* Table */}
 					<div className="App-center" style={{ marginTop: "-60px", height: "100vh" }}>
 						{paquet && (
@@ -146,7 +187,20 @@ function App() {
 								avecQuettee={avecQuettee}
 							></TableComponent>
 						)}
-					</div>
+					</div>{" "}
+					{/* Gager */}
+					<Modal title="Configurer la mise" open={showGager} onOk={onGagerOk} onCancel={onGagerCancel}>
+						<MiseComponent
+							mise={mise}
+							joueurs={paquet.joueurs}
+							atoutEnabled={choisirAtout}
+							setMise={setMise}
+						></MiseComponent>
+					</Modal>
+					{/* Score */}
+					<Modal title="Score" open={showScore} onOk={onScoreOk} onCancel={onScoreCancel}>
+						<ScoreComponent brasses={partie.brasses} ref={scoreRef}></ScoreComponent>
+					</Modal>
 				</div>
 			</Content>
 		</div>

@@ -18,8 +18,7 @@ export class Paquet {
 
 		this.clearMain();
 
-		this.brasser();
-		console.log("fnn");
+		this.brasser(this.avecQuettee);
 	}
 	public joueur1: Joueur;
 	public joueur2: Joueur;
@@ -136,7 +135,7 @@ export class Paquet {
 		return this.joueurs.find((item) => item.getIndex() === idx);
 	}
 
-	public brasser() {
+	public brasser(avecQuettee: boolean) {
 		// Paquet neuf
 		this.initCartes();
 
@@ -155,7 +154,8 @@ export class Paquet {
 		this.joueur4.cartes = this.cartes.slice(24, 32).sort((a, b) => a.rang - b.rang);
 
 		// Passe quettée
-		if (this.quettee.length === 2) {
+		if (avecQuettee) {
+			if (this.cartes.length < 34) return outputError("Nombre de cartes insuffisant pour la quettee!");
 			this.quettee = this.cartes.slice(32, 34).sort((a, b) => a.rang - b.rang);
 		}
 

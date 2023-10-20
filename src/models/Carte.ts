@@ -1,13 +1,13 @@
 import i18next from "i18next";
 
 export enum Sorte {
-	COEUR = 0,
-	PIQUE = 1,
-	CARREAU = 2,
-	TREFLE = 3,
-	JOKER = 4,
-	BLANCHE = 5,
-	SANS_ATOUT = 6,
+	COEUR = 1,
+	PIQUE = 2,
+	CARREAU = 3,
+	TREFLE = 4,
+	JOKER = 5,
+	BLANCHE = 6,
+	SANS_ATOUT = 7,
 }
 
 export enum Couleur {
@@ -16,21 +16,20 @@ export enum Couleur {
 }
 
 export enum Symbole {
-	SEPT = 0,
-	HUIT = 1,
-	NEUF = 2,
-	DIX = 3,
-	JACK = 4,
-	DAME = 5,
-	ROI = 6,
-	AS = 7,
+	SEPT = 1,
+	HUIT = 2,
+	NEUF = 3,
+	DIX = 4,
+	JACK = 5,
+	DAME = 6,
+	ROI = 7,
+	AS = 8,
 }
 
 export function getSorteStr(sorte: Sorte): string {
 	const sorteStr = getKeyByValue(Sorte, sorte);
 	if (!sorteStr) return "";
-	// return i18next.t(`sorte.${sorteStr}`);
-	return "bla";
+	return i18next.t(`sorte.${sorteStr}`);
 }
 
 function getKeyByValue(enumType: any, value: string | number): string | undefined {
@@ -63,6 +62,12 @@ export class Carte {
 	public copy() {
 		const carte = new Carte(this.rang, this.sorte, this.symbole, this.poids);
 		return carte;
+	}
+	public getSymbole(): string {
+		if (!this.symbole) return "";
+		const key = getKeyByValue(Symbole, this.symbole);
+		const str = i18next.t(`symboles.${key}`);
+		return str;
 	}
 
 	public getImage(): string {

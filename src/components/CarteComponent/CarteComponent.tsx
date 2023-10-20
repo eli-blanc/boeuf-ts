@@ -3,6 +3,7 @@ import styles from "./CarteComponent.module.css";
 import { Card } from "antd";
 // import "antd/dist/antd.min.css";
 import { Carte } from "../../models/Carte";
+import { useTranslation } from "react-i18next";
 
 interface CarteComponentProps {
 	clickable?: boolean;
@@ -15,6 +16,7 @@ interface CarteComponentProps {
 }
 
 const CarteComponent: FC<CarteComponentProps> = (props: CarteComponentProps) => {
+	const { t } = useTranslation();
 	function marqueDesactive() {
 		return props.disabled && (props.ouvert || !props.auto || props.moi);
 	}
@@ -35,7 +37,7 @@ const CarteComponent: FC<CarteComponentProps> = (props: CarteComponentProps) => 
 						{(props.ouvert || props.carteMain) && (
 							<div hidden={props.carte.rang === -1}>
 								<p style={{ color: props.carte.couleur, fontSize: "24px", marginTop: "-5px" }}>
-									{props.carte.symbole}
+									{props.carte.getSymbole()}
 								</p>
 								<div style={{ marginTop: !props.carte.symbole ? "-10px" : "-25px" }}>
 									<img

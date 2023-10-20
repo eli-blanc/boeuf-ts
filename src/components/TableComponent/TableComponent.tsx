@@ -85,7 +85,7 @@ const TableComponent: React.ForwardRefRenderFunction<TableComponentMethods, Tabl
 				</Col>
 				{/* Quettée */}
 				{props.avecQuettee && props.action.type === ActionType.GAGER && (
-					<Col style={{ marginTop: "38px" }}>
+					<Col style={{ marginTop: "50px" }}>
 						<GroupeCartesComponent
 							action={props.action}
 							actif={false}

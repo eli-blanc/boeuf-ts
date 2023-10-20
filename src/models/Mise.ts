@@ -14,12 +14,12 @@ export class Mise {
 	public getStr(): string {
 		let montantStr = `${this.montant}`;
 		if (this.montant === 150) {
-			montantStr = "bla"; //i18next.t(`gage.type.${this.petite ? Montant.PETITE : Montant.GROSSE}`);
+			montantStr = i18next.t(`gage.type.${this.petite ? Montant.PETITE : Montant.GROSSE}`);
 		}
 		if (this.atout === Sorte.SANS_ATOUT) {
-			return "bla"; //i18next.t("gage.messageSansAtout", { joueur: this.joueur.nom, quoi: montantStr });
+			return i18next.t("gage.messageSansAtout", { joueur: this.joueur.nom, quoi: montantStr });
 		}
 		let atoutStr = i18next.t(`sortes.${Object.keys(this.atout)}`);
-		return "bla"; //i18next.t("gage.message", { joueur: this.joueur.nom, quoi: montantStr, atout: atoutStr });
+		return i18next.t("gage.message", { joueur: this.joueur.nom, quoi: montantStr, atout: atoutStr });
 	}
 }
