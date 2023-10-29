@@ -11,7 +11,7 @@ export enum Montant {
 export class Mise {
 	constructor(
 		public joueur: Joueur,
-		public montant: number = 0,
+		public montant: number = 60,
 		public atout: Sorte = Sorte.PIQUE,
 		public petite: boolean = false
 	) {
