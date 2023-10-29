@@ -45,7 +45,7 @@ export class Joueur {
 		}
 	}
 
-	public setRefuseSorte(sorteDemandee: Sorte, carte: Carte, atout: Sorte) {
+	public setRefuseSorte(sorteDemandee: Sorte | undefined, carte: Carte, atout: Sorte) {
 		let sorte = carte.sorte;
 		if (carte.isAtout(atout)) {
 			sorte = atout;

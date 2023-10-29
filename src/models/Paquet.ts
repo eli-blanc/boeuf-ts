@@ -208,7 +208,7 @@ export class Paquet {
 				this.main[joueurIdx] = carte;
 				this.pile.push(carte);
 
-				if (!this.sorteDemandee) return outputError("Pas de sorte demandée!");
+				if (!this.sorteDemandee && action.cptJoueur > 0) return outputError("Pas de sorte demandée!");
 				joueur.setRefuseSorte(this.sorteDemandee, carte, atout);
 				this.enleveCarte(carte, joueur.cartes);
 				this.enleveCarte(carte, this.cartes);
@@ -323,7 +323,6 @@ export class Paquet {
 	}
 
 	public getMeilleureCarte(action: Action, mise: Mise): Carte | undefined {
-		if (!this.sorteDemandee) return outputError("Pas de sorte demandee!");
 		const cartes = action.joueur.cartes;
 		// 1re main, 1re carte
 		if (action.cptCarte === 0 && action.cptJoueur === 0) {
@@ -333,11 +332,15 @@ export class Paquet {
 		if (action.cptJoueur === 0) {
 			return this.getCarte1(action.joueur, mise, this.pile, this.cartes);
 		}
+		if (!this.sorteDemandee) {
+			console.log("Pas de sorte demandee!");
+			return undefined;
+		}
 		// Dernière carte de la main
 		if (action.cptJoueur === 3) {
 			return this.getCarte4(action.joueur, this.sorteDemandee, mise);
 		}
-		const sorteDemandee: Sorte = this.sorteDemandee;
+		const sorteDemandee = this.sorteDemandee;
 		return cartes.find((c) => !c.isDisabled(cartes, sorteDemandee, mise.atout));
 	}
 
