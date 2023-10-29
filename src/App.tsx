@@ -149,6 +149,10 @@ function App() {
 			updateSousTitre();
 		}
 	}, [sousTitre]);
+
+	React.useEffect(() => {
+		updateSousTitre();
+	}, [action]);
 	return (
 		<div
 			className="App"
