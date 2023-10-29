@@ -11,30 +11,31 @@ export interface ScoreComponentMethods {
 	updateData: (brasses: Brasse[]) => void;
 }
 
+const columns = [
+	{
+		title: "Brasse",
+		dataIndex: "key",
+		key: "key",
+	},
+	{
+		title: "Brasseur",
+		dataIndex: "brasseur",
+		key: "brasseur",
+	},
+	{
+		title: "Nous",
+		dataIndex: "nous",
+		key: "eux",
+	},
+	{
+		title: "Eux",
+		dataIndex: "eux",
+		key: "eux",
+	},
+];
+
 const ScoreComponent: React.ForwardRefRenderFunction<ScoreComponentMethods, ScoreComponentProps> = (props, ref) => {
 	const [data, setData] = React.useState<any[]>([]);
-	const columns = [
-		{
-			title: "Brasse",
-			dataIndex: "key",
-			key: "key",
-		},
-		{
-			title: "Brasseur",
-			dataIndex: "brasseur",
-			key: "brasseur",
-		},
-		{
-			title: "Nous",
-			dataIndex: "nous",
-			key: "eux",
-		},
-		{
-			title: "Eux",
-			dataIndex: "eux",
-			key: "eux",
-		},
-	];
 	React.useImperativeHandle(ref, () => ({ updateData }));
 
 	function updateData(brasses: Brasse[]) {
@@ -50,6 +51,10 @@ const ScoreComponent: React.ForwardRefRenderFunction<ScoreComponentMethods, Scor
 			setData(newData);
 		}
 	}
+
+	React.useEffect(() => {
+		updateData(props.brasses);
+	}, []);
 
 	return (
 		<div className={styles.ScoreComponent} data-testid="ScoreComponent">
