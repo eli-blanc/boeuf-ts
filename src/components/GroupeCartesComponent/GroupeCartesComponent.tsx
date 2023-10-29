@@ -55,12 +55,14 @@ const GroupeCartesComponent: React.ForwardRefRenderFunction<
 		}
 
 		if (!props.mise) return outputError("Pas de mise!");
+
+		if (props.action.type === ActionType.JOUER && props.action.cptJoueur === 0) {
+			props.paquet.setSorteDemandee(carte, props.mise.atout);
+		}
+
 		const joueurIdx = props.paquet.cliqueCarte(carte, props.action.joueur, props.action, props.mise.atout);
 		if (joueurIdx !== undefined) {
 			props.updateJoueur?.(joueurIdx);
-		}
-		if (props.action.cptJoueur === 0) {
-			props.paquet.setSorteDemandee(carte, props.mise.atout);
 		}
 
 		if (props.action.type === ActionType.DISCARTER && carte.isAtout(props.mise.atout)) {

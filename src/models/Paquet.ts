@@ -212,7 +212,7 @@ export class Paquet {
 				joueur.setRefuseSorte(this.sorteDemandee, carte, atout);
 				this.enleveCarte(carte, joueur.cartes);
 				this.enleveCarte(carte, this.cartes);
-				return;
+				return joueurIdx;
 			}
 			default: {
 				return;
@@ -317,7 +317,6 @@ export class Paquet {
 			if (joker !== undefined) joker.rang = rang1 + 0.25;
 			if (blanche !== undefined) blanche.rang = rang1 + 0.75;
 		}
-		debugger;
 		for (let joueur of this.joueurs) {
 			joueur.cartes.sort((a, b) => a.rang - b.rang);
 		}
