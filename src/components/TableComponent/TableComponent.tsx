@@ -21,10 +21,11 @@ interface TableComponentProps {
 
 export interface TableComponentMethods {
 	onCliqueCarte: (carte: Carte | undefined) => void;
+	updateJoueurs: () => void;
 }
 
 const TableComponent: React.ForwardRefRenderFunction<TableComponentMethods, TableComponentProps> = (props, ref) => {
-	React.useImperativeHandle(ref, () => ({ onCliqueCarte }));
+	React.useImperativeHandle(ref, () => ({ onCliqueCarte, updateJoueurs }));
 	const joueur1ref = React.useRef<JoueurComponentMethods | null>(null);
 	const joueur2ref = React.useRef<JoueurComponentMethods | null>(null);
 	const joueur3ref = React.useRef<JoueurComponentMethods | null>(null);
@@ -65,6 +66,13 @@ const TableComponent: React.ForwardRefRenderFunction<TableComponentMethods, Tabl
 			default:
 				return;
 		}
+	}
+
+	function updateJoueurs() {
+		joueur1ref.current?.setCartes([]);
+		joueur2ref.current?.setCartes([]);
+		joueur3ref.current?.setCartes([]);
+		joueur4ref.current?.setCartes([]);
 	}
 
 	function onDiscarterAtout() {

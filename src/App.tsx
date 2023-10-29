@@ -23,7 +23,7 @@ function App() {
 	const [avecQuettee, setAvecQuettee] = React.useState<boolean>(true);
 	const [showGager, setShowGager] = React.useState<boolean>(false);
 	const [choisirAtout, setChoisirAtout] = React.useState<boolean>(false);
-	const [mise, setMise] = React.useState<Mise>(new Mise(paquet.joueur1, 0, Sorte.SANS_ATOUT));
+	const [mise, setMise] = React.useState<Mise>(new Mise(paquet.joueur1));
 	const [ouvert, setOuvert] = React.useState<boolean>(true);
 	const [titre, setTitre] = React.useState<string>("");
 	const [sousTitre, setSousTitre] = React.useState<string>("");
@@ -71,14 +71,14 @@ function App() {
 
 	function onBrasser() {
 		partie.paquet.brasser();
-		setMise(new Mise(paquet.joueur1, 0, Sorte.SANS_ATOUT));
+		setMise(new Mise(paquet.joueur1));
 		setAction(getInitAction());
 	}
 
 	function onGager() {
 		let mise;
 		if (mise === null || action.type === ActionType.BRASSER) {
-			setMise(new Mise(paquet.joueur1, 0, Sorte.SANS_ATOUT));
+			setMise(new Mise(paquet.joueur1));
 		}
 
 		setShowGager(true);
@@ -131,6 +131,9 @@ function App() {
 				tableRef?.current?.onCliqueCarte(paquet.getMeilleureCarte(action, mise));
 				paquet.attendre = false;
 			}, delaiAuto);
+		}
+		if (action.type === ActionType.PASSER) {
+			tableRef.current?.updateJoueurs();
 		}
 	}
 	function onNextAction() {

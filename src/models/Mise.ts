@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { Sorte } from "./Carte";
+import { getSorteStr, Sorte } from "./Carte";
 import { Joueur } from "./Joueur";
 
 export enum Montant {
@@ -9,7 +9,15 @@ export enum Montant {
 }
 
 export class Mise {
-	constructor(public joueur: Joueur, public montant: number, public atout: Sorte, public petite: boolean = false) {}
+	constructor(
+		public joueur: Joueur,
+		public montant: number = 0,
+		public atout: Sorte = Sorte.PIQUE,
+		public petite: boolean = false
+	) {
+		this.atoutStr = getSorteStr(this.atout);
+	}
+	public atoutStr: string;
 
 	public getStr(): string {
 		let montantStr = `${this.montant}`;

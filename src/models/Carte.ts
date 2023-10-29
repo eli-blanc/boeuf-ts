@@ -33,6 +33,14 @@ export function getSorteStr(sorte: Sorte): string {
 	return sorteStr;
 }
 
+export function getSymboleStr(symbole: Symbole | null): string {
+	if (symbole === null) return "";
+	const key = getKeyByValue(Symbole, symbole);
+	if (!key) return "";
+	const symboleStr = i18next.t(`symboles.${key}`);
+	return symboleStr;
+}
+
 function getKeyByValue(enumType: any, value: string | number): string | undefined {
 	const keys = Object.keys(enumType).filter((key) => enumType[key] === value);
 	return keys.length > 0 ? keys[0] : undefined;
@@ -45,7 +53,7 @@ export class Carte {
 		public symbole: Symbole | null = Symbole.AS,
 		public poids = 0
 	) {
-		this.key = `${symbole}|${sorte}`;
+		this.key = `${getSymboleStr(symbole)}|${getSorteStr(sorte)}`;
 		this.symbole = symbole;
 		this.poids = poids;
 

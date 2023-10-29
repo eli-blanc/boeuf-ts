@@ -108,7 +108,7 @@ const GroupeCartesComponent: React.ForwardRefRenderFunction<
 
 	React.useEffect(() => {
 		initCartes();
-	}, [props.paquet, props.cartes, props.cartes.length]);
+	}, [props.paquet, props.cartes, props.cartes.length, cartes]);
 
 	return (
 		<div className={styles.GroupeCartesComponent} data-testid="GroupeCartesComponent">

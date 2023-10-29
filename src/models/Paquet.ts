@@ -317,6 +317,7 @@ export class Paquet {
 			if (joker !== undefined) joker.rang = rang1 + 0.25;
 			if (blanche !== undefined) blanche.rang = rang1 + 0.75;
 		}
+		debugger;
 		for (let joueur of this.joueurs) {
 			joueur.cartes.sort((a, b) => a.rang - b.rang);
 		}
