@@ -26,6 +26,7 @@ function App() {
 	const [mise, setMise] = React.useState<Mise>(new Mise(paquet.joueur1, 0, Sorte.SANS_ATOUT));
 	const [ouvert, setOuvert] = React.useState<boolean>(true);
 	const [titre, setTitre] = React.useState<string>("");
+	const [sousTitre, setSousTitre] = React.useState<string>("");
 	const [showScore, setShowScore] = React.useState<boolean>(false);
 
 	// Ref
@@ -36,18 +37,18 @@ function App() {
 	const { t, i18n } = useTranslation();
 
 	// Methods
-	function getSousTitre(): string {
+	function updateSousTitre() {
 		if (!action) {
 			console.log("Action undefined!");
 			return "";
 		}
-		let sousTitre = action.getMsg();
+		let newSousTitre = action.getMsg();
 		if (action !== null && partie !== null) {
 			if (action.type === ActionType.JOUER && paquet.sorteDemandee) {
-				sousTitre = `${sousTitre} (${paquet.sorteDemandee} demandé)`;
+				newSousTitre = `${newSousTitre} (${paquet.sorteDemandee} demandé)`;
 			}
 		}
-		return sousTitre;
+		setSousTitre(newSousTitre);
 	}
 
 	function getInitAction(): Action {
@@ -107,6 +108,7 @@ function App() {
 		setShowScore(false);
 	}
 	function nextAction() {
+		setSousTitre("");
 		const brasseur = partie.brasses[partie.brasses.length - 1].brasseur;
 		setAction(action.next(mise, paquet.avecQuettee, paquet, brasseur));
 		if (action.type === ActionType.REMPORTER) {
@@ -138,6 +140,12 @@ function App() {
 	React.useEffect(() => {
 		paquet.brasser();
 	}, [paquet]);
+
+	React.useEffect(() => {
+		if (sousTitre === "") {
+			updateSousTitre();
+		}
+	}, [sousTitre]);
 	return (
 		<div
 			className="App"
@@ -154,7 +162,7 @@ function App() {
 				<h1 style={{ color: "white", marginBottom: "-20px" }}>{t("general.titre")}</h1>
 				{
 					// Sous-titre
-					<h2 style={{ color: "rgb(32,166,237)" }}>{getSousTitre()}</h2>
+					<h2 style={{ color: "rgb(32,166,237)" }}>{sousTitre}</h2>
 				}
 			</Header>
 			<Content>
