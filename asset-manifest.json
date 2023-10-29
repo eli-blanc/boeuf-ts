@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/boeuf-ts/static/css/main.d6d961ed.css",
-    "main.js": "/boeuf-ts/static/js/main.037629b1.js",
+    "main.js": "/boeuf-ts/static/js/main.a5b8ccd5.js",
     "static/js/787.5540cc67.chunk.js": "/boeuf-ts/static/js/787.5540cc67.chunk.js",
     "index.html": "/boeuf-ts/index.html",
     "main.d6d961ed.css.map": "/boeuf-ts/static/css/main.d6d961ed.css.map",
-    "main.037629b1.js.map": "/boeuf-ts/static/js/main.037629b1.js.map",
+    "main.a5b8ccd5.js.map": "/boeuf-ts/static/js/main.a5b8ccd5.js.map",
     "787.5540cc67.chunk.js.map": "/boeuf-ts/static/js/787.5540cc67.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d6d961ed.css",
-    "static/js/main.037629b1.js"
+    "static/js/main.a5b8ccd5.js"
   ]
 }
