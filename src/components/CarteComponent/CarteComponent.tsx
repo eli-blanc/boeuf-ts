@@ -43,7 +43,7 @@ const CarteComponent: FC<CarteComponentProps> = (props: CarteComponentProps) => 
 									<img
 										alt="oups..."
 										className={!props.carte.symbole ? "App-jokers" : "App-sorte"}
-										src={`assets/images/${props.carte.image}`}
+										src={`images/${props.carte.image}`}
 									/>
 								</div>
 							</div>
@@ -55,7 +55,7 @@ const CarteComponent: FC<CarteComponentProps> = (props: CarteComponentProps) => 
 									<img
 										style={{ height: "65px", width: "40px" }}
 										alt="oups..."
-										src={`assets/images/endos.png`}
+										src={`images/endos.png`}
 									/>
 								</div>
 							</div>

@@ -1,25 +1,39 @@
-import React, { FC } from "react";
+import { group } from "console";
+import React from "react";
 import { Action } from "../../models/Action";
-import { Carte, Sorte } from "../../models/Carte";
+import { Carte } from "../../models/Carte";
 import { Joueur } from "../../models/Joueur";
 import { Mise } from "../../models/Mise";
-import GroupeCartesComponent from "../GroupeCartesComponent/GroupeCartesComponent";
+import { Paquet } from "../../models/Paquet";
+import GroupeCartesComponent, { GroupeCartesComponentMethods } from "../GroupeCartesComponent/GroupeCartesComponent";
 import styles from "./JoueurComponent.module.css";
 
 interface JoueurComponentProps {
+	paquet: Paquet;
 	joueur: Joueur;
 	moi?: boolean;
 	mise: Mise;
-	sorteDemandee: Sorte | undefined;
 	action: Action;
 	auto: boolean;
 	ouvert: boolean;
 	cliqueCarte: (carte: Carte) => void;
+	nextAction: () => void;
+	updateJoueur: (idx: number) => void;
 }
 
-const JoueurComponent: FC<JoueurComponentProps> = (props: JoueurComponentProps) => {
+export interface JoueurComponentMethods {
+	setCartes: (cartes: Carte[]) => void;
+}
+
+const JoueurComponent: React.ForwardRefRenderFunction<JoueurComponentMethods, JoueurComponentProps> = (props, ref) => {
+	React.useImperativeHandle(ref, () => ({ setCartes }));
+	const groupeCartesRef = React.useRef<GroupeCartesComponentMethods | null>(null);
+
 	function onDiscarte(carte: Carte) {
 		props.cliqueCarte(carte);
+	}
+	function setCartes(cartes: Carte[]) {
+		groupeCartesRef.current?.setCartes?.([]);
 	}
 	return (
 		<div className={`${styles.JoueurComponent} App-center`} data-testid="JoueurComponent">
@@ -32,20 +46,23 @@ const JoueurComponent: FC<JoueurComponentProps> = (props: JoueurComponentProps) 
 						color: props.joueur.actif ? "rgb(32,166,237)" : "white",
 					}}
 				>
-					{props.joueur.getNom()}
+					{props.joueur.nom}
 				</p>
 			)}
 			{/* Cartes */}
 			<GroupeCartesComponent
+				ref={groupeCartesRef}
+				paquet={props.paquet}
 				moi={props.moi}
 				mise={props.mise}
-				sorteDemandee={props.sorteDemandee}
 				action={props.action}
 				actif={props.joueur.actif}
 				cliqueCarte={onDiscarte}
 				ouvert={props.ouvert}
 				auto={props.auto}
-				cartes={props.joueur.getCartes()}
+				cartes={props.joueur.cartes}
+				nextAction={props.nextAction}
+				updateJoueur={props.updateJoueur}
 			></GroupeCartesComponent>
 			{/* Nom en-dessous */}
 			{props.moi && (
@@ -56,11 +73,11 @@ const JoueurComponent: FC<JoueurComponentProps> = (props: JoueurComponentProps) 
 						color: props.joueur.actif ? "rgb(32,166,237)" : "white",
 					}}
 				>
-					{props.joueur.getNom()}
+					{props.joueur.nom}
 				</p>
 			)}
 		</div>
 	);
 };
 
-export default JoueurComponent;
+export default React.forwardRef(JoueurComponent);

@@ -30,6 +30,7 @@ export class Paquet {
 	public pile: Carte[] = [];
 	public main: Carte[] = [];
 	public quettee: Carte[] = [];
+	public atoutsJoues: number = 0;
 
 	public initCartes() {
 		this.cartes = [];
@@ -60,7 +61,7 @@ export class Paquet {
 
 	public setJoueurActif(joueurActif: Joueur) {
 		for (let joueur of this.joueurs) {
-			if (joueur.getNom() === joueurActif.getNom()) {
+			if (joueur.nom === joueurActif.nom) {
 				joueur.actif = true;
 			} else {
 				joueur.actif = false;
@@ -184,38 +185,37 @@ export class Paquet {
 		}
 	}
 
-	public cliqueCarte(carte: Carte, joueur: Joueur, action: Action, atout: Sorte) {
-		if (joueur !== null) {
-			switch (action.type) {
-				case ActionType.PASSER: {
-					if (!this.getPartenaire(joueur)) return outputError("Pas de partenaire!");
-					const copie = carte.copy();
-					copie.surelevee = true;
-					this.getPartenaire(joueur).cartes.push(copie);
-					this.getPartenaire(joueur).cartes.sort((a, b) => a.rang - b.rang);
-					this.enleveCarte(carte, joueur.cartes);
-					return;
-				}
-				case ActionType.DISCARTER: {
-					this.enleveCarte(carte, joueur.cartes);
-					this.enleveCarte(carte, this.cartes);
-					this.pile.push(carte);
-					return;
-				}
-				case ActionType.JOUER: {
-					const joueurIdx = joueur.getIndex();
-					this.main[joueurIdx] = carte.copy();
-					this.pile.push(carte);
+	public cliqueCarte(carte: Carte, joueur: Joueur, action: Action, atout: Sorte): number | undefined {
+		const partenaire = this.getPartenaire(joueur);
+		switch (action.type) {
+			case ActionType.PASSER: {
+				if (!partenaire) return outputError("Pas de partenaire!");
+				// const copie = carte.copy();
+				carte.surelevee = true;
+				partenaire.cartes.push(carte);
+				partenaire.cartes.sort((a, b) => a.rang - b.rang);
+				this.enleveCarte(carte, joueur.cartes);
+				return partenaire.index;
+			}
+			case ActionType.DISCARTER: {
+				this.enleveCarte(carte, joueur.cartes);
+				this.enleveCarte(carte, this.cartes);
+				this.pile.push(carte);
+				return;
+			}
+			case ActionType.JOUER: {
+				const joueurIdx = joueur.getIndex();
+				this.main[joueurIdx] = carte;
+				this.pile.push(carte);
 
-					if (!this.sorteDemandee) return outputError("Pas de sorte demandée!");
-					joueur.setRefuseSorte(this.sorteDemandee, carte, atout);
-					this.enleveCarte(carte, joueur.cartes);
-					this.enleveCarte(carte, this.cartes);
-					return;
-				}
-				default: {
-					return;
-				}
+				if (!this.sorteDemandee) return outputError("Pas de sorte demandée!");
+				joueur.setRefuseSorte(this.sorteDemandee, carte, atout);
+				this.enleveCarte(carte, joueur.cartes);
+				this.enleveCarte(carte, this.cartes);
+				return;
+			}
+			default: {
+				return;
 			}
 		}
 	}
@@ -465,5 +465,18 @@ export class Paquet {
 			}
 		}
 		return joueur.cartes[0];
+	}
+
+	public setJoueurCartes(joueur: Joueur) {
+		this.joueurs[joueur.index].cartes = joueur.cartes;
+	}
+	public updateCartesJoueurs() {
+		for (let joueur of this.joueurs) {
+			const newCartes: Carte[] = [];
+			for (let carte of joueur.cartes) {
+				newCartes.push(carte);
+			}
+			joueur.cartes = newCartes;
+		}
 	}
 }
